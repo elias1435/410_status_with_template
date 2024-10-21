@@ -1,5 +1,6 @@
 /* use this code to functions.php */
 
+// url redirect to 410 status
 function serve_custom_410_page() {
     // List of URLs to return 410 status
     $urls = [
@@ -18,27 +19,13 @@ function serve_custom_410_page() {
         if (strpos($request_uri, $url) !== false) {
             // Set 410 header
             status_header(410);
+            nocache_headers();
 
-            // Load the content of the custom 410 page
-            $page = get_page_by_path('fehler-410');
-            if ($page) {
-                // Set up the page data to simulate viewing the 'fehler-410' page
-                global $wp_query;
-                $wp_query->post = $page;
-                $wp_query->posts = [$page];
-                $wp_query->queried_object = $page;
-                $wp_query->queried_object_id = $page->ID;
-                $wp_query->is_404 = false;
-                $wp_query->is_page = true;
+            // Load the 'error-410' page template
+            include(get_template_directory() . '/410.php');
 
-                // Load the template for displaying the page
-                include(get_page_template());
-            } else {
-                // Fallback message if the page is not found
-                echo 'This page is no longer available.';
-            }
-            exit;
+            exit; // Prevent any further output
         }
     }
 }
-add_action('template_redirect', 'serve_custom_410_page');
+add_action('template_redirect', 'serve_custom_410_page', 0);
