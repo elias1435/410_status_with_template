@@ -1,10 +1,19 @@
 <?php
-// 410.php Template for WordPress
-// Set the 410 status header.
+/**
+ * The template for displaying 410 pages (not found)
+ * 410.php Template for WordPress
+ * Set the 410 status header.
+ */
+
 status_header(410);
+nocache_headers();
+
+session_start();
+ob_start();
+
+$not_found_page = get_post(11139); // Replace with the ID of your 'error-410' page. if you want to fetch any worpdress page content use ths line otherwise remove this line.
 
 get_header(); // Include the header.
-
 ?>
 
 <div class="error-410-page">
