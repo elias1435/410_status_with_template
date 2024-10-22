@@ -21,21 +21,13 @@ function serve_custom_410_page() {
             status_header(410);
             nocache_headers();
 
-            // Load the 'error-410' page by its ID
-            $error_page_id = 5583; // Replace with the actual page ID for your 'error-410' page. this is the page created on pages just add the page id. it will show the page content...
-            $error_page = get_post($error_page_id);
+            // Redirect to the 410 page with ID 5583
+            $error_page_id = 5583; // The ID of the error page
+            $error_page_url = get_permalink($error_page_id);
 
-            if ($error_page) {
-                // Set up the global post data for the error page
-                global $post;
-                $post = $error_page;
-                setup_postdata($post);
-
-                // Include the page template to display the error page like a normal page
-                include(get_template_directory() . '/page.php');
-
-                // Reset global post data to avoid conflicts
-                wp_reset_postdata();
+            if ($error_page_url) {
+                // Serve the page like a normal template
+                include( locate_template( '410.php' ) );
             } else {
                 // Fallback message if the error page doesn't exist
                 echo 'This page is no longer available.';
