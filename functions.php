@@ -2,39 +2,61 @@
 
 // url redirect to 410 status
 function serve_custom_410_page() {
-    // List of URLs to return 410 status
     $urls = [
-        '/example.php',
-        '/example1.php',
-        '/raucherentwoehnung.php',
-        '/example2.php',
-        '/pages/example3/'
+        '/newsletter/newsletter',
+        '/coaches-schweinfurt/',
+        '/coaches-berlin'
     ];
 
-    // Get the current request URI
-    $request_uri = $_SERVER['REQUEST_URI'];
+$request_uri = $_SERVER['REQUEST_URI'];
 
-    // Check if the current request URI matches any in the list
-    foreach ($urls as $url) {
-        if (strpos($request_uri, $url) !== false) {
-            // Set 410 header
-            status_header(410);
-            nocache_headers();
+if (post_password_required()) {
+    return;
+}
 
-            // Redirect to the 410 page with ID 5583
-            $error_page_id = 5583; // The ID of the error page
-            $error_page_url = get_permalink($error_page_id);
+foreach ($urls as $url) {
+    if (strpos($request_uri, $url) !== false) {
+        // Setze den 410-Status
+        status_header(410);
+        nocache_headers();
 
-            if ($error_page_url) {
-                // Serve the page like a normal template
-                include( locate_template( '410.php' ) );
-            } else {
-                // Fallback message if the error page doesn't exist
-                echo 'This page is no longer available.';
-            }
+        // Setze eine WordPress-Variable, die den 410-Zustand speichert
+        set_query_var('is_410_page', true);
+
+        // Lade den Header
+        get_header();
+
+        // Manually add the 410-forever class to the body tag
+            echo '<body class="' . join(' ', get_body_class('gone-forever')) . '">';
+
+            // Zeige die 410-Nachricht mit Bild
+            echo '<div class="content-410" style="text-align:center; padding: 50px;">';
+			
+			echo '<div class="span9 theme-default">';
+            echo '<div id="site-header">';
+			echo '<img src="https://www.example.com/410-error-AI-took-over.jpg" width="" height="" alt="410 Error - AI Took Over">';
+			echo '</div>';
+            echo '<div class="shadow">';
+            echo '<div class="bigshadow"></div>';
+            echo '</div>';
+            echo '</div>';
+			echo '<div class="container">';
+			echo '<div class="row">';
+			echo '<div class="span10">';
+            echo '<h1>AI vs. Hypnosis: Can Tech Beat the Mind?</h1>';
+            echo '<p>Artificial Intelligence has taken over, and this page has disappeared into the void forever. But don’t worry, you can still get your mind back on track! <a href="https://www.coaching-place.com/">Head over to our homepage</a> and let hypnosis take you to places even AI can’t access.</p>';
+            echo '</div>';
+			echo '</div>';
+			echo '</div>';
+			
+			echo '</div>';
+
+            // Lade den Footer
+            get_footer();
 
             exit;
         }
     }
 }
 add_action('template_redirect', 'serve_custom_410_page', 0);
+
