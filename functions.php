@@ -1,6 +1,16 @@
+<?php
 /* use this code to functions.php */
 
-// url redirect to 410 status
+function add_410_body_class($classes) {
+    if (get_query_var('is_410_page')) {
+        $classes[] = 'gone-forever';
+    }
+    return $classes;
+}
+add_filter('body_class', 'add_410_body_class');
+
+
+// 410 pages with exact match only
 function serve_custom_410_page() {
     $urls = [
         '/newsletter/newsletter',
@@ -8,22 +18,19 @@ function serve_custom_410_page() {
         '/coaches-berlin'
     ];
 
-$request_uri = $_SERVER['REQUEST_URI'];
+    // Get raw request path (excluding query string), no normalization
+    $request_uri = strtok($_SERVER['REQUEST_URI'], '?');
 
-if (post_password_required()) {
-    return;
-}
+    if (post_password_required()) {
+        return;
+    }
 
-foreach ($urls as $url) {
-    if (strpos($request_uri, $url) !== false) {
-        // Setze den 410-Status
+    // Exact match only
+    if (in_array($request_uri, $urls, true)) {
         status_header(410);
         nocache_headers();
-
-        // Setze eine WordPress-Variable, die den 410-Zustand speichert
         set_query_var('is_410_page', true);
 
-        // Lade den Header
         get_header();
 
         // Manually add the 410-forever class to the body tag
@@ -51,11 +58,9 @@ foreach ($urls as $url) {
 			
 			echo '</div>';
 
-            // Lade den Footer
-            get_footer();
-
-            exit;
-        }
+            	// Lade den Footer
+		get_footer();
+		exit;
     }
 }
 add_action('template_redirect', 'serve_custom_410_page', 0);
